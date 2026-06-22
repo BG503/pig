@@ -526,11 +526,29 @@ async function generateShareCard() {
     ctx.lineTo(500, titleY + 36);
     ctx.stroke();
 
-    // 网址
+    // 网址 + 二维码
     const url = location.href;
+    const qrY = titleY + 56;
+
+    try {
+        // 加载二维码图片
+        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data='
+            + encodeURIComponent(url);
+        const qrImg = await loadImage(qrUrl);
+        const qrSize = 100;
+        const qrX = 140;
+        ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+    } catch (e) {
+        // 二维码加载失败，忽略
+    }
+
+    // 网址文字（二维码右侧）
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#8d6e7a';
-    ctx.font = '16px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.fillText('扫码或访问：' + url, W / 2, titleY + 72);
+    ctx.font = '15px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('扫码访问：', 260, qrY + 40);
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(url, 260, qrY + 64);
 
     // 底部标语
     ctx.fillStyle = '#c0a8b2';
