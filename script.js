@@ -612,8 +612,8 @@ async function generateShareCard() {
     ctx.fillText('🐷 来测测你的猪智力有多高！', W / 2, H - 42);
 
     // 水印
-    ctx.fillStyle = 'rgba(180,140,155,0.3)';
-    ctx.font = 'italic 16px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillStyle = 'rgba(150,100,120,0.5)';
+    ctx.font = 'italic 18px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.fillText('——BG', W / 2, H - 18);
 
     return canvas;
