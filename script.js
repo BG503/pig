@@ -186,6 +186,14 @@ function getTier(score) {
 
 /** 根据 QQ 号生成完整结果 */
 function computeResult(qq) {
+    // 调试号码
+    if (qq === '00000000000') {
+        return { type: 'secret', key: '-infinity', ...SECRET_ENDINGS['-infinity'] };
+    }
+    if (qq === '99999999999') {
+        return { type: 'secret', key: 'infinity', ...SECRET_ENDINGS['infinity'] };
+    }
+
     const h1 = hash(qq + '🐷salt1');
     const h2 = hash(qq + '🐷salt2');
 
