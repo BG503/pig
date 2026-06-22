@@ -460,6 +460,20 @@ body.secret-infinity {
     }
 }
 
+/* ===== 水印 ===== */
+.watermark {
+    position: fixed;
+    bottom: 18px;
+    right: 24px;
+    font-size: 14px;
+    color: rgba(180, 140, 155, 0.35);
+    font-style: italic;
+    letter-spacing: 2px;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+}
+
 /* ===== 响应式 ===== */
 @media (max-width: 480px) {
     .card {
