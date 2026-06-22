@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐷 聪明小猪指数测试</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 背景装饰粒子 -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+
+        <!-- ===== 阶段1: 输入页 ===== -->
+        <section class="card active" id="input-page">
+            <div class="pig-logo" id="input-pig"></div>
+            <h1 class="title">聪明小猪指数测试</h1>
+            <p class="subtitle">输入你的 QQ 号，测测你的「猪智力」有多高！</p>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="qq-input"
+                    class="qq-input"
+                    placeholder="请输入 QQ 号"
+                    maxlength="11"
+                    autocomplete="off"
+                >
+                <button class="btn-test" id="btn-test" disabled>
+                    🔍 开始测试
+                </button>
+            </div>
+
+            <p class="hint" id="input-hint">输入 5-11 位数字开始测试</p>
+        </section>
+
+        <!-- ===== 阶段2: 加载页 ===== -->
+        <section class="card" id="loading-page">
+            <div class="pig-logo loading-pig" id="loading-pig"></div>
+            <p class="loading-text" id="loading-text">正在初始化猪脑扫描仪......</p>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <span class="progress-label" id="progress-label">0%</span>
+                </div>
+            </div>
+            <p class="loading-sub" id="loading-sub">请耐心等待，小猪正在努力...</p>
+        </section>
+
+        <!-- ===== 阶段3: 结果页 ===== -->
+        <section class="card" id="result-page">
+            <div class="result-pig" id="result-pig"></div>
+            <div class="score-wrapper">
+                <span class="score-number" id="score-number">0</span>
+            </div>
+            <h2 class="result-title" id="result-title">聪明小猪</h2>
+            <p class="result-desc" id="result-desc">一只聪明的小猪！</p>
+            <div class="result-tags" id="result-tags"></div>
+
+            <div class="result-actions">
+                <button class="btn-retry" id="btn-retry">🔄 再测一次</button>
+                <button class="btn-share" id="btn-share">📋 分享结果</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
