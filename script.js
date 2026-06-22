@@ -151,12 +151,12 @@ let currentNickname = '';
 async function fetchNickname(qq) {
     try {
         const resp = await fetch(
-            `https://api.tomys.top/api/qqheadnick?qq=${qq}`,
+            `https://apis.kit9.cn/api/qq_material/api.php?qq=${qq}`,
             { signal: AbortSignal.timeout(5000) }
         );
         const data = await resp.json();
-        if (data.code === 1 && data.name) {
-            return data.name;
+        if (data.code === 200 && data.data && data.data.name) {
+            return data.data.name;
         }
     } catch (e) {
         // 获取失败静默处理
