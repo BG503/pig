@@ -22,6 +22,9 @@ const $resultTitle = document.getElementById('result-title');
 const $resultDesc  = document.getElementById('result-desc');
 const $resultTags  = document.getElementById('result-tags');
 const $resultQQ    = document.getElementById('result-qq');
+const $resultUser  = document.getElementById('result-user');
+const $resultAvatar = document.getElementById('result-avatar');
+const $resultNick   = document.getElementById('result-nickname');
 
 const $btnRetry    = document.getElementById('btn-retry');
 const $btnShare    = document.getElementById('btn-share');
@@ -141,6 +144,25 @@ const SECRET_ENDINGS = {
 
 // ===== 当前测试的 QQ 号 =====
 let currentQQ = '';
+let currentNickname = '';
+
+// ===== QQ 昵称获取 =====
+
+async function fetchNickname(qq) {
+    try {
+        const resp = await fetch(
+            `https://api.tomys.top/api/qqheadnick?qq=${qq}`,
+            { signal: AbortSignal.timeout(5000) }
+        );
+        const data = await resp.json();
+        if (data.code === 1 && data.name) {
+            return data.name;
+        }
+    } catch (e) {
+        // 获取失败静默处理
+    }
+    return '';
+}
 
 // ===== 工具函数 =====
 
@@ -232,6 +254,10 @@ function startTest() {
     if (qq.length < 5 || qq.length > 11) return;
 
     currentQQ = qq;
+    currentNickname = '';
+
+    // 异步获取昵称（不阻塞加载动画）
+    fetchNickname(qq).then(nick => { currentNickname = nick; });
 
     showPage($loadingPage);
     $progressFill.style.width = '0%';
@@ -322,8 +348,17 @@ function showResult(result) {
         .map(t => `<span class="result-tag">${t}</span>`)
         .join('');
 
-    // 渲染 QQ 号
-    $resultQQ.textContent = `测试账号：${currentQQ}`;
+    // 渲染 QQ 用户信息
+    if (currentNickname) {
+        $resultAvatar.src = `https://q1.qlogo.cn/g?b=qq&nk=${currentQQ}&s=640`;
+        $resultAvatar.style.display = '';
+        $resultNick.textContent = currentNickname;
+        $resultUser.style.display = '';
+        $resultQQ.textContent = `QQ：${currentQQ}`;
+    } else {
+        $resultUser.style.display = 'none';
+        $resultQQ.textContent = `测试账号：${currentQQ}`;
+    }
 
     // 渲染分数
     if (result.type === 'secret') {

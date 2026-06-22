@@ -306,6 +306,29 @@ body {
     100% { transform: scale(1); opacity: 1; }
 }
 
+/* ===== 结果页用户信息 ===== */
+.result-user {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.result-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #f0d8e0;
+    object-fit: cover;
+}
+
+.result-nickname {
+    font-size: 15px;
+    font-weight: 600;
+    color: #6a4a5a;
+}
+
 .score-wrapper {
     margin: 8px 0;
 }
