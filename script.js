@@ -30,6 +30,10 @@ const $btnRetry    = document.getElementById('btn-retry');
 const $btnShare    = document.getElementById('btn-share');
 const $toast       = document.getElementById('toast');
 const $particles   = document.getElementById('particles');
+const $shareOverlay = document.getElementById('share-overlay');
+const $shareImage  = document.getElementById('share-image');
+const $shareClose  = document.getElementById('share-close');
+const $btnCopyText = document.getElementById('btn-copy-text');
 
 // ===== 配置 =====
 
@@ -620,75 +624,43 @@ function roundRect(ctx, x, y, w, h, r) {
 // ===== 分享 =====
 
 $btnShare.addEventListener('click', async () => {
-    const title = $resultTitle.textContent;
-    const score = $scoreNumber.textContent;
-    const url = location.href;
-    const shareText = `🐷 我的聪明小猪指数是：${score} 分！\n称号：${title}\n快来测测你的猪智力有多高！\n${url}`;
-
     $btnShare.textContent = '⏳ 生成中...';
     $btnShare.disabled = true;
 
     try {
         const canvas = await generateShareCard();
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const file = new File([blob], 'smart-pig-index.png', { type: 'image/png' });
-
-        // 策略1: Web Share API（移动端最佳，可直接发微信/QQ/保存相册）
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    title: '聪明小猪指数',
-                    text: shareText,
-                    files: [file],
-                });
-                showToast('✅ 分享完成！');
-                return;
-            } catch (e) {
-                if (e.name === 'AbortError') return; // 用户取消
-                // 分享失败，继续尝试其他方式
-            }
-        }
-
-        // 策略2: 剪贴板图片（桌面端 Chrome）
-        if (navigator.clipboard && navigator.clipboard.write) {
-            try {
-                const item = new ClipboardItem({ 'image/png': blob });
-                await navigator.clipboard.write([item]);
-                showToast('✅ 图片已复制到剪贴板，粘贴即可～');
-                return;
-            } catch (e) {
-                // 剪贴板失败，继续
-            }
-        }
-
-        // 策略3: 直接下载图片（万能兜底）
-        downloadBlob(blob, '聪明小猪指数.png');
-        showToast('✅ 图片已下载，去相册查看分享吧～');
-
+        $shareImage.src = canvas.toDataURL('image/png');
+        $shareOverlay.classList.add('active');
     } catch (e) {
-        // 策略4: 纯文字复制（最后兜底）
-        console.warn('图片生成失败，降级为文字:', e);
-        copyText(shareText);
-        showToast('⚠️ 已复制文字结果，粘贴分享即可～');
+        // 兜底：纯文字复制
+        const title = $resultTitle.textContent;
+        const score = $scoreNumber.textContent;
+        copyText(`🐷 我的聪明小猪指数是：${score} 分！\n称号：${title}\n${location.href}`);
+        showToast('⚠️ 图片生成失败，已复制文字结果～');
     } finally {
         $btnShare.textContent = '📋 分享结果';
         $btnShare.disabled = false;
     }
 });
 
-/** 触发浏览器下载 */
-function downloadBlob(blob, filename) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(a.href);
-    }, 100);
-}
+// 关闭弹窗
+$shareClose.addEventListener('click', () => {
+    $shareOverlay.classList.remove('active');
+});
+
+$shareOverlay.addEventListener('click', (e) => {
+    if (e.target === $shareOverlay) {
+        $shareOverlay.classList.remove('active');
+    }
+});
+
+// 弹窗内复制文字
+$btnCopyText.addEventListener('click', () => {
+    const title = $resultTitle.textContent;
+    const score = $scoreNumber.textContent;
+    copyText(`🐷 我的聪明小猪指数是：${score} 分！\n称号：${title}\n快来测测你的猪智力有多高！\n${location.href}`);
+    showToast('✅ 文字已复制，去粘贴分享吧～');
+});
 
 function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
