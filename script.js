@@ -21,6 +21,7 @@ const $scoreNumber = document.getElementById('score-number');
 const $resultTitle = document.getElementById('result-title');
 const $resultDesc  = document.getElementById('result-desc');
 const $resultTags  = document.getElementById('result-tags');
+const $resultQQ    = document.getElementById('result-qq');
 
 const $btnRetry    = document.getElementById('btn-retry');
 const $btnShare    = document.getElementById('btn-share');
@@ -138,6 +139,9 @@ const SECRET_ENDINGS = {
     },
 };
 
+// ===== 当前测试的 QQ 号 =====
+let currentQQ = '';
+
 // ===== 工具函数 =====
 
 /** DJB2 哈希 */
@@ -227,6 +231,8 @@ function startTest() {
     const qq = $qqInput.value.trim();
     if (qq.length < 5 || qq.length > 11) return;
 
+    currentQQ = qq;
+
     showPage($loadingPage);
     $progressFill.style.width = '0%';
     $progressLabel.textContent = '0%';
@@ -315,6 +321,9 @@ function showResult(result) {
     $resultTags.innerHTML = result.tags
         .map(t => `<span class="result-tag">${t}</span>`)
         .join('');
+
+    // 渲染 QQ 号
+    $resultQQ.textContent = `测试账号：${currentQQ}`;
 
     // 渲染分数
     if (result.type === 'secret') {

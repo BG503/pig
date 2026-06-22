@@ -354,7 +354,13 @@ body {
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.result-qq {
+    font-size: 13px;
+    color: #b8a0ac;
+    margin-bottom: 16px;
 }
 
 .result-tag {
