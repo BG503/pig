@@ -586,26 +586,65 @@ $btnShare.addEventListener('click', async () => {
 
     try {
         const canvas = await generateShareCard();
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const file = new File([blob], 'smart-pig-index.png', { type: 'image/png' });
 
-        // 尝试复制图片到剪贴板
-        if (navigator.clipboard && navigator.clipboard.write) {
-            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-            const item = new ClipboardItem({ 'image/png': blob });
-            await navigator.clipboard.write([item]);
-            showToast('✅ 分享图已复制！去聊天框粘贴即可～');
-        } else {
-            throw new Error('ClipboardItem not supported');
+        // 策略1: Web Share API（移动端最佳，可直接发微信/QQ/保存相册）
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    title: '聪明小猪指数',
+                    text: shareText,
+                    files: [file],
+                });
+                showToast('✅ 分享完成！');
+                return;
+            } catch (e) {
+                if (e.name === 'AbortError') return; // 用户取消
+                // 分享失败，继续尝试其他方式
+            }
         }
+
+        // 策略2: 剪贴板图片（桌面端 Chrome）
+        if (navigator.clipboard && navigator.clipboard.write) {
+            try {
+                const item = new ClipboardItem({ 'image/png': blob });
+                await navigator.clipboard.write([item]);
+                showToast('✅ 图片已复制到剪贴板，粘贴即可～');
+                return;
+            } catch (e) {
+                // 剪贴板失败，继续
+            }
+        }
+
+        // 策略3: 直接下载图片（万能兜底）
+        downloadBlob(blob, '聪明小猪指数.png');
+        showToast('✅ 图片已下载，去相册查看分享吧～');
+
     } catch (e) {
-        // 降级：复制文字 + 网址
-        console.warn('图片复制失败，降级为文字:', e);
+        // 策略4: 纯文字复制（最后兜底）
+        console.warn('图片生成失败，降级为文字:', e);
         copyText(shareText);
-        showToast('⚠️ 图片复制失败，已复制文字结果～');
+        showToast('⚠️ 已复制文字结果，粘贴分享即可～');
     } finally {
         $btnShare.textContent = '📋 分享结果';
         $btnShare.disabled = false;
     }
 });
+
+/** 触发浏览器下载 */
+function downloadBlob(blob, filename) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+    }, 100);
+}
 
 function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
