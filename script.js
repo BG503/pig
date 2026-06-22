@@ -582,9 +582,17 @@ async function generateShareCard() {
     ctx.lineTo(500, titleY + 36);
     ctx.stroke();
 
+    // 测试账号信息
+    const qqLineY = titleY + 62;
+    ctx.fillStyle = '#8d6e7a';
+    ctx.font = '15px "PingFang SC","Microsoft YaHei",sans-serif';
+    let qqLine = `测试账号：${currentQQ}`;
+    if (currentNickname) qqLine += ` (${currentNickname})`;
+    ctx.fillText(qqLine, W / 2, qqLineY);
+
     // 网址 + 二维码
     const url = location.href;
-    const qrY = titleY + 56;
+    const qrY = titleY + 82;
 
     try {
         // 加载二维码图片
